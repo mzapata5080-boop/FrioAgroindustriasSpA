@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Formulario de Trabajador</h2>
+    <form method="post" class="card p-4 shadow-sm">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="mb-3">
+                {{ field.label_tag }}
+
+                {% if field.name == 'email' %}
+                    <div class="input-group">
+                        {{ field }}
+                        <button type="button" id="btn-arroba" class="btn btn-outline-secondary">@</button>
+                    </div>
+                {% else %}
+                    {{ field }}
+                {% endif %}
+
+                {% if field.help_text %}
+                    <div class="form-text text-muted">{{ field.help_text|safe }}</div>
+                {% endif %}
+                {% for error in field.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <div class="mt-3">
+            <button type="submit" class="btn btn-success">Guardar</button>
+            <a href="{% url 'trabajador_list' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const emailInput = document.getElementById('id_email');
+        const btnArroba = document.getElementById('btn-arroba');
+
+        if (btnArroba && emailInput) {
+            btnArroba.addEventListener('click', function() {
+                insertarArroba(emailInput);
+            });
+        }
+
+        if (emailInput) {
+            emailInput.addEventListener('keydown', function(e) {
+                const esTeclaModificadora = e.altKey || e.ctrlKey || e.getModifierState('AltGraph');
+                const esTeclaObjetivo = e.key === 'q' || e.key === 'Q' || e.key === '2' || e.code === 'KeyQ' || e.code === 'Digit2';
+
+                if (esTeclaModificadora && esTeclaObjetivo) {
+                    e.preventDefault();
+                    insertarArroba(this);
+                }
+            });
+        }
+
+        function insertarArroba(input) {
+            const start = input.selectionStart || input.value.length;
+            const end = input.selectionEnd || input.value.length;
+            input.value = input.value.substring(0, start) + '@' + input.value.substring(end);
+            input.focus();
+            input.setSelectionRange(start + 1, start + 1);
+        }
+    });
+</script>
+{% endblock %}

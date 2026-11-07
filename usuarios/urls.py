@@ -1,8 +1,14 @@
 from django.urls import path
-from . import views
+from .views import (
+    TrabajadorListView,
+    TrabajadorCreateView,
+    TrabajadorUpdateView,
+    TrabajadorDeleteView
+)
 
 urlpatterns = [
-    path('', views.custom_login, name='login'),
-    path('dashboard/', views.dashboard, name='dashboard'),
-    path('logout/', views.custom_logout, name='logout'),
+    path('', TrabajadorListView.as_view(), name='trabajador_list'),
+    path('crear/', TrabajadorCreateView.as_view(), name='trabajador_create'),
+    path('editar/<int:pk>/', TrabajadorUpdateView.as_view(), name='trabajador_update'),
+    path('eliminar/<int:pk>/', TrabajadorDeleteView.as_view(), name='trabajador_delete'),
 ]

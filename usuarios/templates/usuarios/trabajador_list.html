@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Gestión de Trabajadores</h2>
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary mb-3">Volver al Dashboard</a>
+    {% if user.rol == 'gerencia' or user.is_superuser %}
+        <a href="{% url 'trabajador_create' %}" class="btn btn-primary mb-3">Agregar Nuevo Trabajador</a>
+    {% endif %}
+
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Usuario</th>
+                <th>Nombre</th>
+                <th>RUT</th>
+                <th>Email</th>
+                <th>Rol / Cargo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in trabajadores %}
+            <tr>
+                <td>{{ t.username }}</td>
+                <td>{{ t.first_name }} {{ t.last_name }}</td>
+                <td>{{ t.rut }}</td>
+                <td>{{ t.email }}</td>
+                <td>
+                    {% for group in t.groups.all %}
+                        {{ group.name }}{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                        <span class="text-muted">Sin asignación</span>
+                    {% endfor %}
+                </td>
+                <td>
+                    <a href="{% url 'trabajador_update' t.pk %}" class="btn btn-sm btn-warning">Editar</a>
+                    <a href="{% url 'trabajador_delete' t.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No hay trabajadores registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
