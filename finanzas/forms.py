@@ -32,3 +32,36 @@ class ClienteForm(forms.ModelForm):
             )
 
         return rut
+
+widgets = {
+
+    'rut': forms.TextInput(
+        attrs={
+            'class':'form-control'
+        }
+    ),
+
+    'razon_social': forms.TextInput(
+        attrs={
+            'class':'form-control'
+        }
+    ),
+
+    'telefono': forms.TextInput(
+        attrs={
+            'class':'form-control'
+        }
+    ),
+
+    'correo': forms.EmailInput(
+        attrs={
+            'class':'form-control'
+        }
+    ),
+
+    'direccion': forms.TextInput(
+        attrs={
+            'class':'form-control'
+        }
+    ),
+}

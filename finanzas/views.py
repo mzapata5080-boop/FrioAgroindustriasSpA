@@ -10,10 +10,15 @@ from .models import Cliente
 from django.views.generic import DetailView
 
 
+from django.views.generic import ListView
+
+from .models import Cliente
+
+
 class ClienteListView(ListView):
     """
-    Muestra el listado completo
-    de clientes registrados.
+    Muestra el listado de clientes y
+    el detalle del cliente seleccionado.
     """
 
     model = Cliente
@@ -23,6 +28,31 @@ class ClienteListView(ListView):
     )
 
     context_object_name = "clientes"
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+
+        cliente_id = self.request.GET.get(
+            "cliente"
+        )
+
+        if cliente_id:
+
+            try:
+
+                context["cliente_seleccionado"] = (
+                    Cliente.objects.get(
+                        id=cliente_id
+                    )
+                )
+
+            except Cliente.DoesNotExist:
+
+                context["cliente_seleccionado"] = None
+
+        return context
+
 
 class ClienteCreateView(CreateView):
     """

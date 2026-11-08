@@ -4,23 +4,123 @@
 
 <div class="container mt-4">
 
-    <h2>Editar Cliente</h2>
+    <div class="card shadow">
 
-    <form method="post">
+        <div class="card-header bg-warning text-dark">
 
-        {% csrf_token %}
+            <h2 class="mb-0">
 
-        {{ form.as_p }}
+                Editar Cliente
 
-        <button
-            type="submit"
-            class="btn btn-warning">
+            </h2>
 
-            Actualizar Cliente
+        </div>
 
-        </button>
+        <div class="card-body">
 
-    </form>
+            <form method="post">
+
+                {% csrf_token %}
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+
+                            RUT *
+
+                        </label>
+
+                        {{ form.rut }}
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+
+                            Razón Social *
+
+                        </label>
+
+                        {{ form.razon_social }}
+
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+
+                            Correo Electrónico
+
+                        </label>
+
+                        {{ form.correo }}
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+
+                            Teléfono
+
+                        </label>
+
+                        {{ form.telefono }}
+
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-12 mb-3">
+
+                        <label class="form-label">
+
+                            Dirección
+
+                        </label>
+
+                        {{ form.direccion }}
+
+                    </div>
+
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-end gap-2">
+
+                    <a
+                        href="{% url 'cliente_list' %}"
+                        class="btn btn-secondary">
+
+                        Cancelar
+
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="btn btn-warning">
+
+                        Actualizar Cliente
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
 
 </div>
 
