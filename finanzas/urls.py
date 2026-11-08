@@ -1,4 +1,4 @@
-from sys import path
+from django.urls import path
 from finanzas.views import *
 
 

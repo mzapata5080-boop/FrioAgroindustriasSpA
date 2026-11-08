@@ -7,7 +7,7 @@ from django.views.generic import (
 )
 from finanzas.forms import ClienteForm
 from .models import Cliente
-
+from django.views.generic import DetailView
 
 
 class ClienteListView(ListView):
@@ -73,3 +73,18 @@ class ClienteDeleteView(DeleteView):
         "cliente_list"
     )
 
+class ClienteDetailView(DetailView):
+    """
+    Muestra los detalles
+    completos de un cliente.
+    """
+
+    model = Cliente
+
+    template_name = (
+        "finanzas/clientes/detalle.html"
+    )
+
+    context_object_name = (
+        "cliente"
+    )
