@@ -11,7 +11,30 @@ ROLES_CHOICES = [
     ('Supervisor de Obra', 'Supervisor de Obra'),
 ]
 
+
+class RutField(forms.RegexField):
+    def __init__(self, **kwargs):
+        super().__init__(
+            regex=r'^\d{8}-[\dK]$',
+            max_length=10,
+            label='RUT',
+            help_text='Formato: 12345678-9 (use K como dígito verificador cuando corresponda).',
+            error_messages={
+                'invalid': 'Ingrese el RUT con el formato 12345678-9 (use K si corresponde).',
+            },
+            widget=forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': '12345678-9',
+                'maxlength': '10',
+                'pattern': '[0-9]{8}-[0-9K]',
+                'title': 'Formato: 12345678-9 (use K si corresponde).',
+            }),
+            **kwargs,
+        )
+
+
 class TrabajadorCrearForm(UserCreationForm):
+    rut = RutField()
     rol = forms.ChoiceField(
         choices=ROLES_CHOICES,
         required=True,
@@ -27,7 +50,6 @@ class TrabajadorCrearForm(UserCreationForm):
             'first_name': 'Nombre',
             'last_name': 'Apellido',
             'email': 'Correo electrónico',
-            'rut': 'RUT',
             'telefono': 'Teléfono',
             'rol': 'Rol / Cargo',
         }
@@ -36,7 +58,6 @@ class TrabajadorCrearForm(UserCreationForm):
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.TextInput(attrs={'class': 'form-control', 'id': 'id_email', 'autocomplete': 'off'}),
-            'rut': forms.TextInput(attrs={'class': 'form-control'}),
             'telefono': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
@@ -60,6 +81,7 @@ class TrabajadorCrearForm(UserCreationForm):
 
 class TrabajadorEditarForm(UserChangeForm):
     password = None
+    rut = RutField()
     rol = forms.ChoiceField(
         choices=ROLES_CHOICES,
         required=True,
@@ -75,7 +97,6 @@ class TrabajadorEditarForm(UserChangeForm):
             'first_name': 'Nombre',
             'last_name': 'Apellido',
             'email': 'Correo electrónico',
-            'rut': 'RUT',
             'telefono': 'Teléfono',
             'is_active': 'Estado Activo',
             'rol': 'Rol / Cargo',
@@ -85,7 +106,6 @@ class TrabajadorEditarForm(UserChangeForm):
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.TextInput(attrs={'class': 'form-control', 'id': 'id_email'}),
-            'rut': forms.TextInput(attrs={'class': 'form-control'}),
             'telefono': forms.TextInput(attrs={'class': 'form-control'}),
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
