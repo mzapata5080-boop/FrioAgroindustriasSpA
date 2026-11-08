@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row">
+
+    <div class="col-md-4">
+
+        <div class="card card-custom">
+
+            <div class="card-header bg-primary text-white">
+
+                <h4>
+
+                    Inventario de Clientes
+
+                </h4>
+
+            </div>
+
+            <div class="card-body">
+
+                {% for cliente in clientes %}
+
+                    <div
+                    class="border-bottom p-2">
+
+                        <h5>
+
+                            {{ cliente.razon_social }}
+
+                        </h5>
+
+                        <small>
+
+                            {{ cliente.correo }}
+
+                        </small>
+
+                    </div>
+
+                {% empty %}
+
+                    No hay clientes.
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-8">
+
+        <div
+        class="card card-custom mb-3">
+
+            <div
+            class="card-header bg-warning">
+
+                Detalle Cliente
+
+            </div>
+
+            <div class="card-body">
+
+                Seleccione un cliente
+                para visualizar
+                su información.
+
+            </div>
+
+        </div>
+
+        <div
+        class="card card-custom">
+
+            <div
+            class="card-header bg-info text-white">
+
+                Acciones
+
+            </div>
+
+            <div class="card-body">
+
+                <a
+                href="{% url 'cliente_create' %}"
+                class="btn btn-success">
+
+                    Agregar Cliente
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
