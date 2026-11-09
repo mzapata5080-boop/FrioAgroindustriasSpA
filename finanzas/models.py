@@ -1,17 +1,13 @@
 from django.db import models
+from .validators import validar_rut_chileno
 
 
 class Cliente(models.Model):
-    """
-    Representa los clientes de Frío y Agroindustria.
-
-    Un cliente puede tener una o varias obras
-    asociadas dentro del sistema.
-    """
 
     rut = models.CharField(
         max_length=12,
-        unique=True
+        unique=True,
+        validators=[validar_rut_chileno]
     )
 
     razon_social = models.CharField(
@@ -28,9 +24,51 @@ class Cliente(models.Model):
         max_length=200
     )
 
+    creado_el = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        verbose_name = "Cliente"
+        verbose_name_plural = "Clientes"
+
     def __str__(self):
-        """
-        Retorna el nombre del cliente
-        cuando se visualice en Django Admin.
-        """
-        return self.razon_social
+        return f"{self.rut} - {self.razon_social}"
+
+
+class Proveedor(models.Model):
+
+    rut = models.CharField(
+        max_length=12,
+        unique=True,
+        validators=[validar_rut_chileno]
+    )
+
+    razon_social = models.CharField(
+        max_length=150
+    )
+
+    giro = models.CharField(
+        max_length=100
+    )
+
+    telefono = models.CharField(
+        max_length=20
+    )
+
+    email = models.EmailField()
+
+    direccion = models.CharField(
+        max_length=200
+    )
+
+    creado_el = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        verbose_name = "Proveedor"
+        verbose_name_plural = "Proveedores"
+
+    def __str__(self):
+        return f"{self.rut} - {self.razon_social}"

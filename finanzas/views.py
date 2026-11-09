@@ -1,3 +1,9 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from .models import Proveedor, Cliente
+from finanzas.forms import ProveedorForm, ClienteForm
+
 from django.urls import reverse_lazy
 from django.views.generic import (
     ListView,
@@ -5,14 +11,47 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
-from finanzas.forms import ClienteForm
-from .models import Cliente
 from django.views.generic import DetailView
 
 
-from django.views.generic import ListView
+@login_required
+def proveedor_list(request):
+    proveedores = Proveedor.objects.all().order_by('-creado_el')
+    return render(request, 'finanzas/proveedor_list.html', {'proveedores': proveedores})
 
-from .models import Cliente
+@login_required
+def proveedor_create(request):
+    if request.method == 'POST':
+        form = ProveedorForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Proveedor registrado con éxito.')
+            return redirect('proveedor_list')
+    else:
+        form = ProveedorForm()
+    return render(request, 'finanzas/proveedor_form.html', {'form': form, 'titulo': 'Nuevo Proveedor'})
+
+@login_required
+def proveedor_update(request, pk):
+    proveedor = get_object_or_404(Proveedor, pk=pk)
+    if request.method == 'POST':
+        form = ProveedorForm(request.POST, instance=proveedor)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Proveedor actualizado.')
+            return redirect('proveedor_list')
+    else:
+        form = ProveedorForm(instance=proveedor)
+    return render(request, 'finanzas/proveedor_form.html', {'form': form, 'titulo': 'Editar Proveedor'})
+
+@login_required
+def proveedor_delete(request, pk):
+    proveedor = get_object_or_404(Proveedor, pk=pk)
+    if request.method == 'POST':
+        proveedor.delete()
+        messages.success(request, 'Proveedor eliminado.')
+        return redirect('proveedor_list')
+    return render(request, 'finanzas/proveedor_confirm_delete.html', {'proveedor': proveedor})
 
 
 class ClienteListView(ListView):
@@ -53,40 +92,27 @@ class ClienteListView(ListView):
 
         return context
 
-
 class ClienteCreateView(CreateView):
-    """
-    Permite registrar nuevos clientes.
-    """
 
     model = Cliente
-
     form_class = ClienteForm
+    template_name = "finanzas/clientes/crear.html"
+    success_url = reverse_lazy("cliente_list")
 
-    template_name = (
-        "finanzas/clientes/crear.html"
-    )
-
-    success_url = reverse_lazy(
-        "cliente_list"
-    )
+    def form_invalid(self, form):
+        print(form.errors)
+        return super().form_invalid(form)
 
 class ClienteUpdateView(UpdateView):
-    """
-    Permite modificar clientes existentes.
-    """
 
     model = Cliente
-
     form_class = ClienteForm
+    template_name = "finanzas/clientes/editar.html"
+    success_url = reverse_lazy("cliente_list")
 
-    template_name = (
-        "finanzas/clientes/editar.html"
-    )
-
-    success_url = reverse_lazy(
-        "cliente_list"
-    )
+    def form_invalid(self, form):
+        print(form.errors)
+        return super().form_invalid(form)
 
 class ClienteDeleteView(DeleteView):
     """
