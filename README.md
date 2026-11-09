@@ -1,4 +1,4 @@
-🧊 Sistema de Gestión Integral - Frío y Agroindustrias SpA
+### 🧊 Sistema de Gestión Integral - Frío y Agroindustrias SpA
 📋 Descripción General del Proyecto
 El proyecto Frío y Agroindustrias SpA es una plataforma web desarrollada en Django diseñada específicamente para optimizar y automatizar los procesos administrativos, operativos y de control interno de una empresa agroindustrial. El sistema centraliza la gestión de recursos clave, abarcando desde el registro y validación de entidades financieras (clientes y proveedores) hasta el control de acceso de los trabajadores, inventarios y obras.
 
