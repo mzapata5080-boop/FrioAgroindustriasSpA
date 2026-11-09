@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card border-danger col-md-6 mx-auto">
+        <div class="card-header bg-danger text-white">
+            <h5 class="mb-0">Confirmar Eliminación</h5>
+        </div>
+        <div class="card-body">
+            <p>¿Estás seguro de que deseas eliminar al proveedor <strong>{{ proveedor.razon_social }}</strong>?</p>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Sí, Eliminar</button>
+                <a href="{% url 'proveedor_list' %}" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

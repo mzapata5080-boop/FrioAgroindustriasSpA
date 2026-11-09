@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <!-- Encabezado con título y botones de acción -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Gestión de Proveedores</h2>
+        <div>
+            <!-- Botón Volver al Dashboard -->
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary me-2">
+                ← Volver al Dashboard
+            </a>
+            <!-- Botón Crear Proveedor -->
+            <a href="{% url 'proveedor_create' %}" class="btn btn-primary">
+                + Nuevo Proveedor
+            </a>
+        </div>
+    </div>
+    
+    <!-- Tabla de proveedores -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>RUT</th>
+                    <th>Razón Social</th>
+                    <th>Giro</th>
+                    <th>Teléfono</th>
+                    <th>Email</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in proveedores %}
+                <tr>
+                    <td><strong>{{ p.rut }}</strong></td>
+                    <td>{{ p.razon_social }}</td>
+                    <td>{{ p.giro }}</td>
+                    <td>{{ p.telefono }}</td>
+                    <td>{{ p.email }}</td>
+                    <td class="text-center">
+                        <a href="{% url 'proveedor_update' p.id %}" class="btn btn-sm btn-warning">Editar</a>
+                        <a href="{% url 'proveedor_delete' p.id %}" class="btn btn-sm btn-danger">Eliminar</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted">No hay proveedores registrados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
