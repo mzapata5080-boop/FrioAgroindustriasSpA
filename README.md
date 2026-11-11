@@ -33,9 +33,3 @@ Gestión de Proveedores y Clientes: Administración completa de entidades comerc
 * Base de Datos: SQLite (Entorno de desarrollo local).
 
 * Control de Versiones: Git / GitHub (Flujo de ramas y Pull Requests).
-
-* Frontend: HTML5, CSS3, Bootstrap 5.3, JavaScript.
-
-* Base de Datos: SQLite (Entorno de desarrollo local).
-
-* Control de Versiones: Git / GitHub (Flujo de ramas y Pull Requests).
