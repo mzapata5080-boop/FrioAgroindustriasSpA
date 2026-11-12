@@ -1,10 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView
 from .models import Proveedor, Cliente
-from .forms import ProveedorForm, ClienteForm
+from finanzas.forms import ProveedorForm, ClienteForm
+
+from django.urls import reverse_lazy
+from django.views.generic import (
+    ListView,
+    CreateView,
+    UpdateView,
+    DeleteView
+)
+from django.views.generic import DetailView
+
 
 @login_required
 def proveedor_list(request):
@@ -45,59 +53,94 @@ def proveedor_delete(request, pk):
         return redirect('proveedor_list')
     return render(request, 'finanzas/proveedor_confirm_delete.html', {'proveedor': proveedor})
 
+
 class ClienteListView(ListView):
+    """
+    Muestra el listado de clientes y
+    el detalle del cliente seleccionado.
+    """
+
     model = Cliente
-    template_name = "finanzas/clientes/listar.html"
+
+    template_name = (
+        "finanzas/clientes/listar.html"
+    )
+
     context_object_name = "clientes"
 
     def get_context_data(self, **kwargs):
+
         context = super().get_context_data(**kwargs)
-        cliente_id = self.request.GET.get("cliente")
+
+        cliente_id = self.request.GET.get(
+            "cliente"
+        )
+
         if cliente_id:
+
             try:
-                context["cliente_seleccionado"] = Cliente.objects.get(id=cliente_id)
+
+                context["cliente_seleccionado"] = (
+                    Cliente.objects.get(
+                        id=cliente_id
+                    )
+                )
+
             except Cliente.DoesNotExist:
+
                 context["cliente_seleccionado"] = None
+
         return context
 
 class ClienteCreateView(CreateView):
+
     model = Cliente
     form_class = ClienteForm
     template_name = "finanzas/clientes/crear.html"
     success_url = reverse_lazy("cliente_list")
-
-    def form_valid(self, form):
-        messages.success(self.request, "¡Cliente creado exitosamente!")
-        return super().form_valid(form)
 
     def form_invalid(self, form):
         print(form.errors)
         return super().form_invalid(form)
 
 class ClienteUpdateView(UpdateView):
+
     model = Cliente
     form_class = ClienteForm
     template_name = "finanzas/clientes/editar.html"
     success_url = reverse_lazy("cliente_list")
-
-    def form_valid(self, form):
-        messages.success(self.request, "¡Cliente actualizado correctamente!")
-        return super().form_valid(form)
 
     def form_invalid(self, form):
         print(form.errors)
         return super().form_invalid(form)
 
 class ClienteDeleteView(DeleteView):
-    model = Cliente
-    template_name = "finanzas/clientes/eliminar.html"
-    success_url = reverse_lazy("cliente_list")
+    """
+    Permite eliminar clientes.
+    """
 
-    def delete(self, request, *args, **kwargs):
-        messages.success(request, "El cliente ha sido eliminado correctamente.")
-        return super().delete(request, *args, **kwargs)
+    model = Cliente
+
+    template_name = (
+        "finanzas/clientes/eliminar.html"
+    )
+
+    success_url = reverse_lazy(
+        "cliente_list"
+    )
 
 class ClienteDetailView(DetailView):
+    """
+    Muestra los detalles
+    completos de un cliente.
+    """
+
     model = Cliente
-    template_name = "finanzas/clientes/detalle.html"
-    context_object_name = "cliente"
+
+    template_name = (
+        "finanzas/clientes/detalle.html"
+    )
+
+    context_object_name = (
+        "cliente"
+    )

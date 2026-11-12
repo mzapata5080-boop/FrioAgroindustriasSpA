@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow border-danger">
+
+        <div class="card-header bg-danger text-white">
+
+            <h2 class="mb-0">
+
+                Eliminar Cliente
+
+            </h2>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="alert alert-warning">
+
+                Esta acción no se puede deshacer.
+
+            </div>
+
+            <h5 class="mb-4">
+
+                ¿Desea eliminar el siguiente cliente?
+
+            </h5>
+
+            <div class="card bg-light">
+
+                <div class="card-body">
+
+                    <p>
+
+                        <strong>RUT:</strong>
+
+                        {{ object.rut }}
+
+                    </p>
+
+                    <p>
+
+                        <strong>Razón Social:</strong>
+
+                        {{ object.razon_social }}
+
+                    </p>
+
+                    <p>
+
+                        <strong>Correo:</strong>
+
+                        {{ object.correo }}
+
+                    </p>
+
+                    <p>
+
+                        <strong>Teléfono:</strong>
+
+                        {{ object.telefono }}
+
+                    </p>
+
+                    <p>
+
+                        <strong>Dirección:</strong>
+
+                        {{ object.direccion }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            <hr>
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <div
+                    class="d-flex
+                           justify-content-end
+                           gap-2">
+
+                    <a
+                        href="{% url 'cliente_list' %}"
+                        class="btn btn-secondary">
+
+                        Cancelar
+
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="btn btn-danger">
+
+                        Eliminar Cliente
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
