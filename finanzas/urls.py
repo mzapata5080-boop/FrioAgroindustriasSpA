@@ -10,7 +10,10 @@ urlpatterns = [
     path('proveedores/nuevo/', views.proveedor_create, name='proveedor_create'),
     path('proveedores/editar/<int:pk>/', views.proveedor_update, name='proveedor_update'),
     path('proveedores/eliminar/<int:pk>/', views.proveedor_delete, name='proveedor_delete'),
-
+    
+    # Rutas del módulo de Facturas de Compra
+    path('facturas/nueva/',FacturaCreateView.as_view(),name='factura_create'),
+    
     # CLIENTES
     
         path(

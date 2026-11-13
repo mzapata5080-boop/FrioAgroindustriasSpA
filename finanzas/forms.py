@@ -1,5 +1,6 @@
 from django import forms
 from .models import Cliente, Proveedor
+from .models import (Cliente,Proveedor,FacturaCompra)
 
 class ClienteForm(forms.ModelForm):
 
@@ -124,3 +125,51 @@ class ProveedorForm(forms.ModelForm):
             )
 
         return rut
+
+class FacturaCompraForm(forms.ModelForm):
+
+    class Meta:
+
+        model = FacturaCompra
+
+        fields = [
+            'proveedor',
+            'fecha',
+            'numero_documento',
+            'tipo_documento',
+            'monto'
+        ]
+
+        widgets = {
+
+            'fecha': forms.DateInput(
+                attrs={
+                    'type': 'date',
+                    'class': 'form-control'
+                }
+            ),
+
+            'proveedor': forms.Select(
+                attrs={
+                    'class': 'form-control'
+                }
+            ),
+
+            'numero_documento': forms.TextInput(
+                attrs={
+                    'class': 'form-control'
+                }
+            ),
+
+            'tipo_documento': forms.TextInput(
+                attrs={
+                    'class': 'form-control'
+                }
+            ),
+
+            'monto': forms.NumberInput(
+                attrs={
+                    'class': 'form-control'
+                }
+            ),
+        }

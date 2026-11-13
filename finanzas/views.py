@@ -12,7 +12,8 @@ from django.views.generic import (
     DeleteView
 )
 from django.views.generic import DetailView
-
+from .models import FacturaCompra
+from .forms import FacturaCompraForm
 
 @login_required
 def proveedor_list(request):
@@ -143,4 +144,18 @@ class ClienteDetailView(DetailView):
 
     context_object_name = (
         "cliente"
+    )
+
+class FacturaCreateView(CreateView):
+
+    model = FacturaCompra
+
+    form_class = FacturaCompraForm
+
+    template_name = (
+        "finanzas/facturas/crear.html"
+    )
+
+    success_url = reverse_lazy(
+        "factura_create"
     )
