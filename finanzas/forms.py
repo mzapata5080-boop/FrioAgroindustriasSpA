@@ -9,10 +9,14 @@ class ClienteForm(forms.ModelForm):
         fields = [
             'rut',
             'razon_social',
+            'giro',
             'telefono',
-            'correo',
-            'direccion'
-        ]
+            'email',
+            'direccion',
+            'banco',
+            'tipo_cuenta',
+            'numero_cuenta'
+        ]   
 
         widgets = {
             'rut': forms.TextInput(attrs={'class': 'form-control'}),
@@ -20,6 +24,9 @@ class ClienteForm(forms.ModelForm):
             'telefono': forms.TextInput(attrs={'class': 'form-control'}),
             'correo': forms.EmailInput(attrs={'class': 'form-control'}),
             'direccion': forms.TextInput(attrs={'class': 'form-control'}),
+            'banco': forms.TextInput(attrs={'class': 'form-control'}),
+            'tipo_cuenta': forms.Select(attrs={'class': 'form-control'}),
+            'numero_cuenta': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
     def clean_rut(self):

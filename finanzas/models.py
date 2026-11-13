@@ -61,7 +61,23 @@ class Proveedor(models.Model):
     direccion = models.CharField(
         max_length=200
     )
+    banco = models.CharField(
+    max_length=100
+    )
 
+    tipo_cuenta = models.CharField(
+        max_length=50,
+        choices=[
+            ('Corriente', 'Corriente'),
+            ('Vista', 'Vista'),
+            ('Ahorro', 'Ahorro'),
+        ]
+    )
+
+    numero_cuenta = models.CharField(
+        max_length=50
+    )
+    
     creado_el = models.DateTimeField(
         auto_now_add=True
     )
