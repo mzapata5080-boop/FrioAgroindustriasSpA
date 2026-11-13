@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="bodega bodega--{{ seccion }}" aria-labelledby="titulo-bodega">
+    <a class="btn btn-outline-dark" href="{% url 'dashboard' %}">
+        Volver al panel
+    </a>
+
+    <header class="my-3">
+        <h1 id="titulo-bodega">{{ titulo }}</h1>
+    </header>
+
+    <nav class="d-grid d-sm-flex flex-wrap gap-2 mb-3" aria-label="Secciones de bodega">
+        <a href="{% url 'inventario:stock' %}"
+           class="btn py-2 {% if seccion == 'stock' %}btn-success{% else %}btn-outline-success{% endif %}"
+           {% if seccion == "stock" %}aria-current="page"{% endif %}>
+            Inventario
+        </a>
+
+        <a href="{% url 'inventario:ingresos' %}"
+           class="btn py-2 {% if seccion == 'ingresos' %}btn-success{% else %}btn-outline-success{% endif %}"
+           {% if seccion == "ingresos" %}aria-current="page"{% endif %}>
+            Ingresos
+        </a>
+
+        <a href="{% url 'inventario:salidas' %}"
+           class="btn py-2"
+           style="--bs-btn-color: {% if seccion == 'salidas' %}#fff{% else %}#9a4200{% endif %};
+                  --bs-btn-bg: {% if seccion == 'salidas' %}#9a4200{% else %}transparent{% endif %};
+                  --bs-btn-border-color: #9a4200;
+                  --bs-btn-hover-color: #fff;
+                  --bs-btn-hover-bg: #783300;
+                  --bs-btn-hover-border-color: #783300;
+                  --bs-btn-active-color: #fff;
+                  --bs-btn-active-bg: #783300;
+                  --bs-btn-active-border-color: #783300;
+                  --bs-btn-focus-shadow-rgb: 154, 66, 0;"
+           {% if seccion == "salidas" %}aria-current="page"{% endif %}>
+            Salidas
+        </a>
+    </nav>
+
+    <div class="table-responsive rounded border bg-white"
+         tabindex="0" role="region" aria-labelledby="titulo-bodega">
+        <table class="table table-bordered table-striped align-middle mb-0">
+            <thead class="{% if seccion != 'salidas' %}table-success{% endif %}"
+                   {% if seccion == "salidas" %}style="--bs-table-bg: #fff1e3;"{% endif %}>
+                <tr>
+                    <th scope="col">Repuesto</th>
+                    {% if seccion == "stock" %}
+                        <th scope="col">Código</th>
+                        <th scope="col">Ubicación</th>
+                        <th scope="col">Stock disponible</th>
+                        <th scope="col">Stock mínimo</th>
+                    {% else %}
+                        <th scope="col">Fecha</th>
+                        <th scope="col">Cantidad</th>
+                        <th scope="col">Orden de trabajo</th>
+                    {% endif %}
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for registro in registros %}
+                    <tr>
+                        <th scope="row">
+                            {{ registro.material }}
+                            {% if registro.critico %}
+                                <span class="badge bg-danger">Stock crítico</span>
+                            {% endif %}
+                        </th>
+                        {% for etiqueta, valor in registro.campos %}
+                            <td>{{ valor }}</td>
+                        {% endfor %}
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="{% if seccion == 'stock' %}5{% else %}4{% endif %}"
+                            class="text-center text-muted py-4">
+                            {% if aviso %}
+                                {{ aviso }}
+                            {% else %}
+                                No hay registros disponibles.
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
