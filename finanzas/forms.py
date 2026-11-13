@@ -10,30 +10,21 @@ class ClienteForm(forms.ModelForm):
         fields = [
             'rut',
             'razon_social',
-            'giro',
             'telefono',
-            'email',
-            'direccion',
-            'banco',
-            'tipo_cuenta',
-            'numero_cuenta'
-        ]   
+            'correo',
+            'direccion'
+        ]
 
         widgets = {
             'rut': forms.TextInput(attrs={'class': 'form-control'}),
             'razon_social': forms.TextInput(attrs={'class': 'form-control'}),
             'telefono': forms.TextInput(attrs={'class': 'form-control'}),
             'correo': forms.EmailInput(attrs={'class': 'form-control'}),
-            'direccion': forms.TextInput(attrs={'class': 'form-control'}),
-            'banco': forms.TextInput(attrs={'class': 'form-control'}),
-            'tipo_cuenta': forms.Select(attrs={'class': 'form-control'}),
-            'numero_cuenta': forms.TextInput(attrs={'class': 'form-control'}),
+            'direccion': forms.TextInput(attrs={'class': 'form-control'})
         }
 
     def clean_rut(self):
         rut = self.cleaned_data.get('rut')
-
-        print("RUT recibido:", rut)
 
         if Cliente.objects.filter(rut=rut)\
                 .exclude(pk=self.instance.pk)\
@@ -94,7 +85,10 @@ class ProveedorForm(forms.ModelForm):
             'giro',
             'telefono',
             'email',
-            'direccion'
+            'direccion',
+            'banco',
+            'tipo_cuenta',
+            'numero_cuenta'
         ]
 
         widgets = {
@@ -104,6 +98,9 @@ class ProveedorForm(forms.ModelForm):
             'telefono': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'direccion': forms.TextInput(attrs={'class': 'form-control'}),
+            'banco': forms.TextInput(attrs={'class': 'form-control'}),
+            'tipo_cuenta': forms.Select(attrs={'class': 'form-control'}),
+            'numero_cuenta': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
     def clean_rut(self):
@@ -114,7 +111,7 @@ class ProveedorForm(forms.ModelForm):
         if len(rut_limpio) > 1:
             rut = f"{rut_limpio[:-1]}-{rut_limpio[-1]}"
 
-        qs = Cliente.objects.filter(rut=rut)
+        qs = Proveedor.objects.filter(rut=rut)
 
         if self.instance.pk:
             qs = qs.exclude(pk=self.instance.pk)
