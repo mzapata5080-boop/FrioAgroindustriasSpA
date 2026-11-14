@@ -14,13 +14,17 @@ from django.views.generic import (
 from django.views.generic import DetailView
 from .models import FacturaCompra
 from .forms import FacturaCompraForm
+from .decorators import solo_finanzas
+
 
 @login_required
+@solo_finanzas
 def proveedor_list(request):
     proveedores = Proveedor.objects.all().order_by('-creado_el')
     return render(request, 'finanzas/proveedor_list.html', {'proveedores': proveedores})
 
 @login_required
+@solo_finanzas
 def proveedor_create(request):
     if request.method == 'POST':
         form = ProveedorForm(request.POST)
@@ -33,6 +37,7 @@ def proveedor_create(request):
     return render(request, 'finanzas/proveedor_form.html', {'form': form, 'titulo': 'Nuevo Proveedor'})
 
 @login_required
+@solo_finanzas
 def proveedor_update(request, pk):
     proveedor = get_object_or_404(Proveedor, pk=pk)
     if request.method == 'POST':
@@ -46,13 +51,15 @@ def proveedor_update(request, pk):
     return render(request, 'finanzas/proveedor_form.html', {'form': form, 'titulo': 'Editar Proveedor'})
 
 @login_required
+@solo_finanzas
 def proveedor_delete(
     request,
     pk
 ):
+
     messages.error(
         request,
-        "No se permite eliminar proveedores para proteger el historial de compras."
+        "No se permite eliminar proveedores porque pueden existir facturas asociadas."
     )
 
     return redirect(
@@ -192,3 +199,34 @@ class FacturaCreateView(CreateView):
         )
 
         return super().form_invalid(form)
+
+class FacturaListView(ListView):
+    """
+    Lista de facturas registradas.
+    """
+
+    model = FacturaCompra
+
+    template_name = (
+        "finanzas/facturas/listar.html"
+    )
+
+    context_object_name = (
+        "facturas"
+    )
+
+    ordering = ["-fecha"]
+
+class FacturaDetailView(
+    DetailView
+):
+
+    model = FacturaCompra
+
+    template_name = (
+        "finanzas/facturas/detalle.html"
+    )
+
+    context_object_name = (
+        "factura"
+    )

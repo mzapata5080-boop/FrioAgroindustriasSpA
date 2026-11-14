@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div
+            class="card-header bg-primary text-white">
+
+            <h3>
+
+                Detalle Factura
+
+            </h3>
+
+        </div>
+
+        <div class="card-body">
+
+            <p>
+
+                <strong>
+                    Proveedor:
+                </strong>
+
+                {{ factura.proveedor }}
+
+            </p>
+
+            <p>
+
+                <strong>
+                    Fecha:
+                </strong>
+
+                {{ factura.fecha }}
+
+            </p>
+
+            <p>
+
+                <strong>
+                    Documento:
+                </strong>
+
+                {{ factura.numero_documento }}
+
+            </p>
+
+            <p>
+
+                <strong>
+                    Tipo:
+                </strong>
+
+                {{ factura.tipo_documento }}
+
+            </p>
+
+            <p>
+
+                <strong>
+                    Monto:
+                </strong>
+
+                ${{ factura.monto }}
+
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

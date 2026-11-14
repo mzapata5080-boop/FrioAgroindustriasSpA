@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div
+            class="card-header bg-success text-white">
+
+            <h3>
+
+                Facturas Registradas
+
+            </h3>
+
+        </div>
+
+        <div class="card-body">
+
+            <a
+                href="{% url 'factura_create' %}"
+                class="btn btn-success mb-3">
+
+                Nueva Factura
+
+            </a>
+
+            <table
+                class="table table-striped">
+
+                <thead>
+
+                    <tr>
+
+                        <th>N° Documento</th>
+
+                        <th>Proveedor</th>
+
+                        <th>Fecha</th>
+
+                        <th>Monto</th>
+
+                        <th>Acciones</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for factura in facturas %}
+
+                    <tr>
+
+                        <td>
+                            {{ factura.numero_documento }}
+                        </td>
+
+                        <td>
+                            {{ factura.proveedor }}
+                        </td>
+
+                        <td>
+                            {{ factura.fecha }}
+                        </td>
+
+                        <td>
+                            ${{ factura.monto }}
+                        </td>
+
+                        <td>
+
+                            <a
+                                href="{% url 'factura_detail' factura.id %}"
+                                class="btn btn-info btn-sm">
+
+                                Detalles
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="5">
+
+                            No existen facturas.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
