@@ -6,8 +6,7 @@
 
     <div class="card shadow-lg border-0">
 
-        <div class="card-header text-white"
-             style="background:#6f42c1;">
+        <div class="card-header text-white" style="background:#221c2d;">
 
             <div class="d-flex justify-content-between">
 
@@ -24,6 +23,27 @@
         </div>
 
         <div class="card-body">
+
+            <!-- Mensajes del sistema -->
+
+            {% if messages %}
+
+            {% for message in messages %}
+
+            <div class="alert alert-{{ message.tags }}
+                    alert-dismissible fade show" role="alert">
+
+                {{ message }}
+
+                <button type="button" class="btn-close" data-bs-dismiss="alert">
+
+                </button>
+
+            </div>
+
+            {% endfor %}
+
+            {% endif %}
 
             <form method="post">
 
@@ -49,6 +69,17 @@
 
                         {{ form.fecha }}
 
+                        {% if form.fecha.errors %}
+
+                        <div class="text-danger mt-1">
+
+                            {{ form.fecha.errors }}
+
+                        </div>
+
+                        {% endif %}
+
+
                     </div>
 
                     <div class="col-md-6 mb-3">
@@ -58,6 +89,17 @@
                         </label>
 
                         {{ form.numero_documento }}
+
+                        {% if form.numero_documento.errors %}
+
+                        <div class="text-danger mt-1">
+
+                            {{ form.numero_documento.errors }}
+
+                        </div>
+
+                        {% endif %}
+
 
                     </div>
 
@@ -79,6 +121,17 @@
 
                         {{ form.monto }}
 
+                        {% if form.monto.errors %}
+
+                        <div class="text-danger mt-1">
+
+                            {{ form.monto.errors }}
+
+                        </div>
+
+                        {% endif %}
+
+
                     </div>
 
                 </div>
@@ -98,15 +151,13 @@
 
                 <div class="d-flex justify-content-end gap-2">
 
-                    <a href="{% url 'dashboard' %}"
-                       class="btn btn-secondary">
+                    <a href="{% url 'dashboard' %}" class="btn btn-secondary">
 
                         Cancelar
 
                     </a>
 
-                    <button type="submit"
-                            class="btn btn-success">
+                    <button type="submit" class="btn btn-success">
 
                         Guardar Factura
 

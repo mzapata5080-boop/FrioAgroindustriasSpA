@@ -104,24 +104,59 @@ class ProveedorForm(forms.ModelForm):
         }
 
     def clean_rut(self):
-        rut = self.cleaned_data.get('rut', '')
 
-        rut_limpio = rut.upper().replace(".", "").replace("-", "")
+        rut = self.cleaned_data.get(
+            'rut',
+            ''
+        )
 
-        if len(rut_limpio) > 1:
-            rut = f"{rut_limpio[:-1]}-{rut_limpio[-1]}"
+        rut_formateado = (
+            self.formatear_rut(rut)
+        )
 
-        qs = Proveedor.objects.filter(rut=rut)
+        qs = (
+            Proveedor.objects
+            .filter(rut=rut_formateado)
+        )
 
         if self.instance.pk:
-            qs = qs.exclude(pk=self.instance.pk)
 
-        if qs.exists():
-            raise forms.ValidationError(
-                "Ya existe un cliente con este RUT."
+            qs = qs.exclude(
+                pk=self.instance.pk
             )
 
-        return rut
+        if qs.exists():
+
+            raise forms.ValidationError(
+                'Ya existe un proveedor con este RUT.'
+            )
+
+        return rut_formateado
+
+    def formatear_rut(self, rut):
+
+        rut = (
+            str(rut)
+            .replace(".", "")
+            .replace("-", "")
+            .upper()
+            .strip()
+        )
+
+        cuerpo = rut[:-1]
+
+        dv = rut[-1]
+
+        partes = []
+
+        while cuerpo:
+
+            partes.insert(0, cuerpo[-3:])
+
+            cuerpo = cuerpo[:-3]
+
+        return ".".join(partes) + "-" + dv
+
 
 class FacturaCompraForm(forms.ModelForm):
 

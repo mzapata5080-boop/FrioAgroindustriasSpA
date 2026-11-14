@@ -147,6 +147,9 @@ class ClienteDetailView(DetailView):
     )
 
 class FacturaCreateView(CreateView):
+    """
+    Registrar nuevas facturas de compra.
+    """
 
     model = FacturaCompra
 
@@ -159,3 +162,29 @@ class FacturaCreateView(CreateView):
     success_url = reverse_lazy(
         "factura_create"
     )
+
+    def form_valid(self, form):
+        """
+        Se ejecuta cuando el formulario
+        es válido.
+        """
+
+        messages.success(
+            self.request,
+            "✅ Factura registrada exitosamente."
+        )
+
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        """
+        Se ejecuta cuando existen
+        errores en el formulario.
+        """
+
+        messages.error(
+            self.request,
+            "❌ No fue posible registrar la factura. Revise los campos obligatorios."
+        )
+
+        return super().form_invalid(form)
