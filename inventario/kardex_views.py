@@ -20,6 +20,7 @@ def kardex(request):
         "ajuste": "ajuste",
         "reversa": "ajuste",
     }
+
     for variable, color in (
         ("FYAG_TIPO_INGRESO", "success"),
         ("FYAG_TIPO_SALIDA", "salida"),
@@ -31,9 +32,19 @@ def kardex(request):
     with connection.cursor() as cursor:
         cursor.execute("""
             SELECT m.fecha_registro, r.descripcion, m.tipo,
-                   m.cantidad, r.unidad_medida, m.numero_ot
+                   m.cantidad, r.unidad_medida, m.numero_ot,
+                   recepcion.responsable_id,
+                   COALESCE(
+                       NULLIF(BTRIM(CONCAT_WS(' ', trabajador.first_name,
+                                                  trabajador.last_name)), ''),
+                       trabajador.username
+                   ) AS nombre_trabajador
             FROM public.inventario_movimientobodega AS m
             JOIN public.inventario_repuesto AS r ON r.id = m.repuesto_id
+            LEFT JOIN public.recepciones_ingreso AS recepcion
+                ON recepcion.movimiento_id = m.id
+            LEFT JOIN public.usuarios_trabajador AS trabajador
+                ON trabajador.id = recepcion.responsable_id
             ORDER BY m.fecha_registro DESC, m.id DESC
         """)
         filas = cursor.fetchall()
@@ -47,8 +58,13 @@ def kardex(request):
             "cantidad": cantidad,
             "unidad": unidad,
             "numero_ot": numero_ot,
+            "responsable_id": responsable_id,
+            "nombre_trabajador": nombre_trabajador,
         }
-        for fecha, articulo, tipo, cantidad, unidad, numero_ot in filas
+        for (
+            fecha, articulo, tipo, cantidad, unidad, numero_ot,
+            responsable_id, nombre_trabajador,
+        ) in filas
     ]
 
     return render(request, "kardex.html", {"movimientos": movimientos})

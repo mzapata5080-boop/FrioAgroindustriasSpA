@@ -16,8 +16,10 @@
                     <th scope="col">Fecha y hora</th>
                     <th scope="col">Artículo</th>
                     <th scope="col">Movimiento</th>
-                    <th scope="col" class="text-end">Cantidad</th>
+                    <th scope="col" class="text-start">Cantidad</th>
                     <th scope="col">Orden de trabajo</th>
+                    <th scope="col">ID del trabajador</th>
+                    <th scope="col">Trabajador</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,14 +42,18 @@
                                 </span>
                             {% endif %}
                         </td>
-                        <td class="text-end text-nowrap">
+                        <td class="text-start text-nowrap">
                             {{ movimiento.cantidad }} {{ movimiento.unidad }}
                         </td>
                         <td>{{ movimiento.numero_ot|default:"—" }}</td>
+                        <td>{{ movimiento.responsable_id|default_if_none:"—" }}</td>
+                        <td>
+                            {{ movimiento.nombre_trabajador|default:"Sin responsable registrado" }}
+                        </td>
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="5" class="py-4 text-center text-muted">
+                        <td colspan="7" class="py-4 text-center text-muted">
                             No hay movimientos registrados.
                         </td>
                     </tr>

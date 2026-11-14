@@ -5,6 +5,8 @@ from django.db import connection
 from django.shortcuts import render
 from django.utils import timezone
 
+from .ingresos_views import tipo_movimiento_ingreso
+
 
 @login_required(login_url="login")
 def stock(request):
@@ -40,16 +42,17 @@ def stock(request):
 
 @login_required(login_url="login")
 def movimientos(request, seccion):
-    titulo = "Ingresos de bodega" if seccion == "ingresos" else "Salidas de bodega"
-    tipo_ingreso = os.getenv("FYAG_TIPO_INGRESO", "").strip()
+    es_ingreso = seccion == "ingresos"
+    titulo = "Ingresos de bodega" if es_ingreso else "Salidas de bodega"
+    tipo_ingreso = tipo_movimiento_ingreso()
     tipo_salida = os.getenv("FYAG_TIPO_SALIDA", "").strip()
+    tipo = tipo_ingreso if es_ingreso else tipo_salida
     contexto = {"titulo": titulo, "seccion": seccion}
 
-    if not tipo_ingreso or not tipo_salida or tipo_ingreso == tipo_salida:
-        contexto["aviso"] = "Falta configurar los tipos de ingreso y salida."
+    if not tipo or len(tipo) > 10 or tipo_ingreso.casefold() == tipo_salida.casefold():
+        contexto["aviso"] = "Revisa la configuración del tipo de movimiento."
         return render(request, "listado.html", contexto)
 
-    tipo = tipo_ingreso if seccion == "ingresos" else tipo_salida
     with connection.cursor() as cursor:
         cursor.execute("""
             SELECT r.descripcion, r.unidad_medida, m.cantidad,
