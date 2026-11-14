@@ -20,7 +20,15 @@
             <ul class="list-group list-group-flush mb-4">
                 <li class="list-group-item">Agregar nuevos trabajadores y asignar roles</li>
             </ul>
-            <a href="{% url 'trabajador_list' %}" class="btn btn-primary mt-auto">Gestionar Trabajadores</a>
+            <div class="d-grid gap-2 mt-auto">
+                <a href="{% url 'trabajador_list' %}" class="btn btn-primary">
+                    Gestionar Trabajadores
+                </a>
+                <a href="{% url 'inventario:kardex' %}" class="btn text-white"
+                   style="background-color: #59347a;">
+                    Ver Kardex
+                </a>
+            </div>
         </div>
     </div>
     {% endif %}
@@ -47,7 +55,7 @@
 <section class="card p-3 mb-4">
     <h2 class="h4">Bodega</h2>
     <div>
-        <a class="btn btn-outline-success" href="{% url 'inventario:stock' %}">
+        <a href="{% url 'inventario:stock' %}" class="btn btn-outline-success">
             Abrir inventario
         </a>
     </div>
