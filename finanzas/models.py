@@ -99,8 +99,8 @@ class Proveedor(models.Model):
 class FacturaCompra(models.Model):
 
     proveedor = models.ForeignKey(
-        Proveedor,
-        on_delete=models.CASCADE
+    Proveedor,
+    on_delete=models.PROTECT
     )
 
     fecha = models.DateField()

@@ -46,14 +46,18 @@ def proveedor_update(request, pk):
     return render(request, 'finanzas/proveedor_form.html', {'form': form, 'titulo': 'Editar Proveedor'})
 
 @login_required
-def proveedor_delete(request, pk):
-    proveedor = get_object_or_404(Proveedor, pk=pk)
-    if request.method == 'POST':
-        proveedor.delete()
-        messages.success(request, 'Proveedor eliminado.')
-        return redirect('proveedor_list')
-    return render(request, 'finanzas/proveedor_confirm_delete.html', {'proveedor': proveedor})
+def proveedor_delete(
+    request,
+    pk
+):
+    messages.error(
+        request,
+        "No se permite eliminar proveedores para proteger el historial de compras."
+    )
 
+    return redirect(
+        "proveedor_list"
+    )
 
 class ClienteListView(ListView):
     """
