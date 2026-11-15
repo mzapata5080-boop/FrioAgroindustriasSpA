@@ -12,14 +12,19 @@ from django.views.generic import (
     DeleteView
 )
 from django.views.generic import DetailView
+from .models import FacturaCompra
+from .forms import FacturaCompraForm
+from .decorators import solo_finanzas
 
 
 @login_required
+@solo_finanzas
 def proveedor_list(request):
     proveedores = Proveedor.objects.all().order_by('-creado_el')
     return render(request, 'finanzas/proveedor_list.html', {'proveedores': proveedores})
 
 @login_required
+@solo_finanzas
 def proveedor_create(request):
     if request.method == 'POST':
         form = ProveedorForm(request.POST)
@@ -32,6 +37,7 @@ def proveedor_create(request):
     return render(request, 'finanzas/proveedor_form.html', {'form': form, 'titulo': 'Nuevo Proveedor'})
 
 @login_required
+@solo_finanzas
 def proveedor_update(request, pk):
     proveedor = get_object_or_404(Proveedor, pk=pk)
     if request.method == 'POST':
@@ -45,14 +51,20 @@ def proveedor_update(request, pk):
     return render(request, 'finanzas/proveedor_form.html', {'form': form, 'titulo': 'Editar Proveedor'})
 
 @login_required
-def proveedor_delete(request, pk):
-    proveedor = get_object_or_404(Proveedor, pk=pk)
-    if request.method == 'POST':
-        proveedor.delete()
-        messages.success(request, 'Proveedor eliminado.')
-        return redirect('proveedor_list')
-    return render(request, 'finanzas/proveedor_confirm_delete.html', {'proveedor': proveedor})
+@solo_finanzas
+def proveedor_delete(
+    request,
+    pk
+):
 
+    messages.error(
+        request,
+        "No se permite eliminar proveedores porque pueden existir facturas asociadas."
+    )
+
+    return redirect(
+        "proveedor_list"
+    )
 
 class ClienteListView(ListView):
     """
@@ -143,4 +155,78 @@ class ClienteDetailView(DetailView):
 
     context_object_name = (
         "cliente"
+    )
+
+class FacturaCreateView(CreateView):
+    """
+    Registrar nuevas facturas de compra.
+    """
+
+    model = FacturaCompra
+
+    form_class = FacturaCompraForm
+
+    template_name = (
+        "finanzas/facturas/crear.html"
+    )
+
+    success_url = reverse_lazy(
+        "factura_create"
+    )
+
+    def form_valid(self, form):
+        """
+        Se ejecuta cuando el formulario
+        es válido.
+        """
+
+        messages.success(
+            self.request,
+            "✅ Factura registrada exitosamente."
+        )
+
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        """
+        Se ejecuta cuando existen
+        errores en el formulario.
+        """
+
+        messages.error(
+            self.request,
+            "❌ No fue posible registrar la factura. Revise los campos obligatorios."
+        )
+
+        return super().form_invalid(form)
+
+class FacturaListView(ListView):
+    """
+    Lista de facturas registradas.
+    """
+
+    model = FacturaCompra
+
+    template_name = (
+        "finanzas/facturas/listar.html"
+    )
+
+    context_object_name = (
+        "facturas"
+    )
+
+    ordering = ["-fecha"]
+
+class FacturaDetailView(
+    DetailView
+):
+
+    model = FacturaCompra
+
+    template_name = (
+        "finanzas/facturas/detalle.html"
+    )
+
+    context_object_name = (
+        "factura"
     )

@@ -28,4 +28,5 @@ urlpatterns = [
     # Enlaza tus rutas de trabajadores
     path('trabajadores/', include('usuarios.urls')),
     path('finanzas/', include('finanzas.urls')),
+    path("inventario/", include("inventario.urls")),
 ]

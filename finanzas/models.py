@@ -62,6 +62,29 @@ class Proveedor(models.Model):
         max_length=200
     )
 
+    banco = models.CharField(
+        max_length=100,
+        default="",
+        blank=True
+    )
+
+    tipo_cuenta = models.CharField(
+        max_length=50,
+        choices=[
+            ('Corriente', 'Corriente'),
+            ('Vista', 'Vista'),
+            ('Ahorro', 'Ahorro'),
+        ],
+        default="",
+        blank=True
+    )
+
+    numero_cuenta = models.CharField(
+        max_length=50,
+        default="",
+        blank=True
+    )
+    
     creado_el = models.DateTimeField(
         auto_now_add=True
     )
@@ -72,3 +95,32 @@ class Proveedor(models.Model):
 
     def __str__(self):
         return f"{self.rut} - {self.razon_social}"
+    
+class FacturaCompra(models.Model):
+
+    proveedor = models.ForeignKey(
+    Proveedor,
+    on_delete=models.PROTECT
+    )
+
+    fecha = models.DateField()
+
+    numero_documento = models.CharField(
+        max_length=50
+    )
+
+    tipo_documento = models.CharField(
+        max_length=50
+    )
+
+    monto = models.DecimalField(
+        max_digits=12,
+        decimal_places=2
+    )
+
+    creado_el = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return self.numero_documento

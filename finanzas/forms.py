@@ -1,5 +1,6 @@
 from django import forms
 from .models import Cliente, Proveedor
+from .models import (Cliente,Proveedor,FacturaCompra)
 
 class ClienteForm(forms.ModelForm):
 
@@ -19,13 +20,11 @@ class ClienteForm(forms.ModelForm):
             'razon_social': forms.TextInput(attrs={'class': 'form-control'}),
             'telefono': forms.TextInput(attrs={'class': 'form-control'}),
             'correo': forms.EmailInput(attrs={'class': 'form-control'}),
-            'direccion': forms.TextInput(attrs={'class': 'form-control'}),
+            'direccion': forms.TextInput(attrs={'class': 'form-control'})
         }
 
     def clean_rut(self):
         rut = self.cleaned_data.get('rut')
-
-        print("RUT recibido:", rut)
 
         if Cliente.objects.filter(rut=rut)\
                 .exclude(pk=self.instance.pk)\
@@ -86,7 +85,10 @@ class ProveedorForm(forms.ModelForm):
             'giro',
             'telefono',
             'email',
-            'direccion'
+            'direccion',
+            'banco',
+            'tipo_cuenta',
+            'numero_cuenta'
         ]
 
         widgets = {
@@ -96,24 +98,110 @@ class ProveedorForm(forms.ModelForm):
             'telefono': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'direccion': forms.TextInput(attrs={'class': 'form-control'}),
+            'banco': forms.TextInput(attrs={'class': 'form-control'}),
+            'tipo_cuenta': forms.Select(attrs={'class': 'form-control'}),
+            'numero_cuenta': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
     def clean_rut(self):
-        rut = self.cleaned_data.get('rut', '')
 
-        rut_limpio = rut.upper().replace(".", "").replace("-", "")
+        rut = self.cleaned_data.get(
+            'rut',
+            ''
+        )
 
-        if len(rut_limpio) > 1:
-            rut = f"{rut_limpio[:-1]}-{rut_limpio[-1]}"
+        rut_formateado = (
+            self.formatear_rut(rut)
+        )
 
-        qs = Cliente.objects.filter(rut=rut)
+        qs = (
+            Proveedor.objects
+            .filter(rut=rut_formateado)
+        )
 
         if self.instance.pk:
-            qs = qs.exclude(pk=self.instance.pk)
 
-        if qs.exists():
-            raise forms.ValidationError(
-                "Ya existe un cliente con este RUT."
+            qs = qs.exclude(
+                pk=self.instance.pk
             )
 
-        return rut
+        if qs.exists():
+
+            raise forms.ValidationError(
+                'Ya existe un proveedor con este RUT.'
+            )
+
+        return rut_formateado
+
+    def formatear_rut(self, rut):
+
+        rut = (
+            str(rut)
+            .replace(".", "")
+            .replace("-", "")
+            .upper()
+            .strip()
+        )
+
+        cuerpo = rut[:-1]
+
+        dv = rut[-1]
+
+        partes = []
+
+        while cuerpo:
+
+            partes.insert(0, cuerpo[-3:])
+
+            cuerpo = cuerpo[:-3]
+
+        return ".".join(partes) + "-" + dv
+
+
+class FacturaCompraForm(forms.ModelForm):
+
+    class Meta:
+
+        model = FacturaCompra
+
+        fields = [
+            'proveedor',
+            'fecha',
+            'numero_documento',
+            'tipo_documento',
+            'monto'
+        ]
+
+        widgets = {
+
+            'fecha': forms.DateInput(
+                attrs={
+                    'type': 'date',
+                    'class': 'form-control'
+                }
+            ),
+
+            'proveedor': forms.Select(
+                attrs={
+                    'class': 'form-control'
+                }
+            ),
+
+            'numero_documento': forms.TextInput(
+                attrs={
+                    'class': 'form-control'
+                }
+            ),
+
+            'tipo_documento': forms.TextInput(
+                attrs={
+                    'class': 'form-control'
+                }
+            ),
+
+            'monto': forms.NumberInput(
+                attrs={
+                    'class': 'form-control'
+                }
+            ),
+        }

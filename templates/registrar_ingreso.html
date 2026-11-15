@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="pb-4" aria-labelledby="titulo-ingreso">
+    <a href="{% url 'inventario:ingresos' %}" class="btn btn-outline-dark mb-3">
+        Volver a Ingresos
+    </a>
+
+    <h1 id="titulo-ingreso" class="mb-3">Registrar ingreso</h1>
+
+    {% if not guardado_disponible %}
+        <p class="alert alert-warning">
+            El guardado de ingresos está pendiente de la migración de Inventario.
+        </p>
+    {% endif %}
+
+    <form method="post" class="card p-3 p-md-4" id="form-ingreso">
+        {% csrf_token %}
+        {{ form.solicitud_id }}
+        {{ form.solicitud_id.errors }}
+        {{ form.non_field_errors }}
+
+        <div class="row g-3">
+            <div class="col-12 col-md-6">
+                <label for="buscar-factura" class="form-label">Buscar factura</label>
+                <input id="buscar-factura" type="search" class="form-control mb-2"
+                       placeholder="Número o proveedor" autocomplete="off"
+                       aria-controls="id_factura" aria-describedby="estado-factura">
+                {{ form.factura.label_tag }}
+                {{ form.factura }}
+                <p id="estado-factura" class="form-text mb-0" role="status"></p>
+                {{ form.factura.errors }}
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label for="buscar-articulo" class="form-label">Buscar artículo</label>
+                <input id="buscar-articulo" type="search" class="form-control mb-2"
+                       placeholder="Código o descripción" autocomplete="off"
+                       aria-controls="id_articulo" aria-describedby="estado-articulo">
+                {{ form.articulo.label_tag }}
+                {{ form.articulo }}
+                <p id="estado-articulo" class="form-text mb-0" role="status"></p>
+                {{ form.articulo.errors }}
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-4">
+                {{ form.cantidad.label_tag }}
+                {{ form.cantidad }}
+                {{ form.cantidad.errors }}
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-4">
+                {{ form.unidad.label_tag }}
+                {{ form.unidad }}
+                {{ form.unidad.errors }}
+            </div>
+
+            <div class="col-12 col-md-4">
+                <label id="etiqueta-precio" for="{{ form.precio.id_for_label }}"
+                       class="form-label">
+                    Precio unitario neto (CLP)
+                </label>
+                {{ form.precio }}
+                {{ form.precio.errors }}
+            </div>
+        </div>
+
+        <p class="mt-3">
+            Subtotal neto
+            <output id="subtotal" for="id_cantidad id_precio">—</output>
+        </p>
+
+        <div>
+            <button type="submit" class="btn btn-success"
+                    {% if not guardado_disponible %}disabled{% endif %}>
+                Confirmar ingreso
+            </button>
+        </div>
+    </form>
+</section>
+
+{{ unidades_articulos|json_script:"unidades-articulos" }}
+<script>
+    function habilitarBusqueda(campoId, selectorId, estadoId, mensajeVacio) {
+        const campo = document.getElementById(campoId);
+        const selector = document.getElementById(selectorId);
+        const estado = document.getElementById(estadoId);
+        const opciones = Array.from(selector.options);
+        const opcionVacia = opciones.find((opcion) => opcion.value === "");
+        const registros = opciones.filter((opcion) => opcion.value !== "");
+
+        function mostrarCoincidencias() {
+            const termino = campo.value.trim().toLocaleLowerCase("es-CL");
+            const seleccion = selector.value;
+            const coincidencias = registros.filter((opcion) =>
+                opcion.text.toLocaleLowerCase("es-CL").includes(termino)
+            );
+
+            selector.replaceChildren(opcionVacia, ...coincidencias);
+            selector.value = coincidencias.some((opcion) => opcion.value === seleccion)
+                ? seleccion
+                : "";
+            selector.size = termino ? Math.min(6, Math.max(2, coincidencias.length + 1)) : 1;
+
+            if (!registros.length) {
+                estado.textContent = mensajeVacio;
+            } else if (!termino) {
+                estado.textContent = "";
+            } else {
+                estado.textContent = coincidencias.length
+                    ? `Coincidencias: ${coincidencias.length}`
+                    : "No hay coincidencias.";
+            }
+        }
+
+        campo.addEventListener("input", mostrarCoincidencias);
+        selector.addEventListener("change", () => {
+            if (selector.value) {
+                campo.value = "";
+                mostrarCoincidencias();
+            }
+        });
+
+        mostrarCoincidencias();
+    }
+
+    habilitarBusqueda("buscar-factura", "id_factura", "estado-factura", "No hay facturas cargadas.");
+    habilitarBusqueda("buscar-articulo", "id_articulo", "estado-articulo", "No hay artículos cargados.");
+
+    const formulario = document.getElementById("form-ingreso");
+    const etiquetaPrecio = document.getElementById("etiqueta-precio");
+    const subtotal = document.getElementById("subtotal");
+    const formato = new Intl.NumberFormat("es-CL", {
+        style: "currency",
+        currency: "CLP",
+        maximumFractionDigits: 2
+    });
+
+    const etiquetasPorUnidad = {
+        unidad: "Precio neto por unidad (CLP)",
+        m: "Precio neto por metro (CLP)",
+        kg: "Precio neto por kilogramo (CLP)",
+        l: "Precio neto por litro (CLP)"
+    };
+
+    function actualizarPrecio() {
+        const unidad = formulario.elements.unidad.value;
+        const cantidad = formulario.elements.cantidad.valueAsNumber;
+        const precio = formulario.elements.precio.valueAsNumber;
+
+        etiquetaPrecio.textContent = etiquetasPorUnidad[unidad] ?? "Precio unitario neto (CLP)";
+        subtotal.value = Number.isFinite(cantidad) && Number.isFinite(precio)
+            ? `${formato.format(cantidad * precio)} CLP`
+            : "—";
+    }
+
+    const articulo = formulario.elements.articulo;
+    const unidadesArticulos = JSON.parse(
+        document.getElementById("unidades-articulos").textContent
+    );
+
+    function aplicarUnidadDelArticulo() {
+        formulario.elements.unidad.value = unidadesArticulos[articulo.value] ?? "";
+        actualizarPrecio();
+    }
+
+    articulo.addEventListener("change", aplicarUnidadDelArticulo);
+    document.getElementById("buscar-articulo").addEventListener("input", aplicarUnidadDelArticulo);
+    formulario.elements.unidad.addEventListener("change", actualizarPrecio);
+    formulario.elements.cantidad.addEventListener("input", actualizarPrecio);
+    formulario.elements.precio.addEventListener("input", actualizarPrecio);
+
+    aplicarUnidadDelArticulo();
+</script>
+{% endblock %}

@@ -16,3 +16,87 @@ body {
 .badge-salida { background-color: #fd7e14; color: white; }  
 .badge-merma { background-color: #dc3545; color: white; }   
 .badge-kardex { background-color: #6f42c1; color: white; }
+
+.bodega {
+    --bodega-color: #146c43;
+    --bodega-fondo: #eaf6ef;
+    padding-bottom: 2rem;
+    overflow-wrap: anywhere;
+}
+
+.bodega--salidas {
+    --bodega-color: #9a4200;
+    --bodega-fondo: #fff1e3;
+}
+
+.bodega__encabezado {
+    border-inline-start: 0.375rem solid var(--bodega-color);
+    background: var(--bodega-fondo);
+    color: var(--bodega-color);
+}
+
+.bodega__nav,
+.bodega__campos {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.bodega__nav a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #adb5bd;
+    border-radius: 0.5rem;
+    color: #212529;
+    text-decoration: none;
+}
+
+.bodega__nav a[aria-current="page"] {
+    background: var(--bodega-color);
+    border-color: var(--bodega-color);
+    color: #fff;
+    font-weight: 700;
+}
+
+.bodega article h2 {
+    font-size: 1.25em;
+}
+
+.bodega__critico {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    background: #fce8e8;
+    color: #842029;
+    font-weight: 700;
+}
+
+#texto-bodega {
+    min-height: 44px;
+    font-size: inherit;
+}
+
+.bodega--texto-grande {
+    font-size: 1.25rem;
+}
+
+.bodega--texto-grande h1 {
+    font-size: 1.6em;
+}
+
+@media (min-width: 576px) {
+    .bodega__nav {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .bodega__campos {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 768px) {
+    .bodega:not(.bodega--texto-grande) .bodega__campos {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}

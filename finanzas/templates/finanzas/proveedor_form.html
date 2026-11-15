@@ -21,4 +21,61 @@
         </div>
     </div>
 </div>
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            const rutInput =
+                document.getElementById(
+                    "id_rut"
+                );
+
+            if (rutInput) {
+
+                rutInput.addEventListener(
+                    "input",
+                    function () {
+
+                        let valor =
+                            this.value
+                                .replace(/\./g, "")
+                                .replace(/-/g, "")
+                                .toUpperCase();
+
+                        if (
+                            valor.length < 2
+                        ) {
+                            return;
+                        }
+
+                        let cuerpo =
+                            valor.slice(
+                                0,
+                                -1
+                            );
+
+                        let dv =
+                            valor.slice(-1);
+
+                        cuerpo =
+                            cuerpo.replace(
+                                /\B(?=(\d{3})+(?!\d))/g,
+                                "."
+                            );
+
+                        this.value =
+                            cuerpo +
+                            "-" +
+                            dv;
+                    }
+                );
+
+            }
+
+        }
+    );
+
+</script>
 {% endblock %}
